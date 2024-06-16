@@ -32,4 +32,8 @@ export class BooksService {
   async findAllAuthorBooks(authorId: string, page:number, limit:number): Promise<BookDoc[]> {
     return this.bookRepository.findAllAuthorBooks(authorId, page, limit);
   }
+
+  async deleteAllAuthorBooks(authorId: string): Promise<unknown> {
+    return this.bookRepository.deleteAllAuthorBooks(authorId);
+  }
 }

@@ -71,4 +71,12 @@ export class BooksController {
 
     return this.bookService.findAllAuthorBooks(authorId, pageNumber, limitNumber);
   }
+
+  @ApiResponse('Author Books deleted successfully!')
+  @Delete('author/:authorId')
+  async deleteAuthorBooks(
+    @Param('authorId') authorId: string,
+  ): Promise<unknown> {
+    return this.bookService.deleteAllAuthorBooks(authorId);
+  }
 }

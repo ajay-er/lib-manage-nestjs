@@ -39,4 +39,8 @@ export class BookRepository {
     const skip = (page - 1) * limit;
     return this.bookModel.find({ authorId }).skip(skip).limit(limit).exec();
   }
+
+  async deleteAllAuthorBooks(authorId: string): Promise<unknown> {
+    return this.bookModel.deleteMany({ authorId });
+  }
 }

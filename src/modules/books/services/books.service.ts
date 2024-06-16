@@ -20,4 +20,12 @@ export class BooksService {
   async findById(id: string): Promise<BookDoc> {
     return this.bookRepository.findById(id);
   }
+
+  async update(id: string, BookDto: Partial<BookDto>): Promise<BookDoc> {
+    return this.bookRepository.update(id, BookDto);
+  }
+
+  async delete(id: string): Promise<BookDoc> {
+    return this.bookRepository.delete(id);
+  }
 }

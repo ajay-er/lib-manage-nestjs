@@ -1,4 +1,4 @@
-import { Response } from '@/common/response/decorators/response.decorator';
+import { ApiResponse } from '@/common/response/decorators/response.decorator';
 import {
   Controller, Get, HttpStatus, VERSION_NEUTRAL,
 } from '@nestjs/common';
@@ -16,7 +16,7 @@ export class HealthController {
   })
 
   @Get()
-  @Response('Application is healthy')
+  @ApiResponse('Application is healthy')
   checkHealth() {
     return { status: 'ok' };
   }
@@ -26,7 +26,7 @@ export class HealthController {
     dto: StatusResponse,
   })
   @Get('/status')
-  @Response('Application status retrieved successfully')
+  @ApiResponse('Application status retrieved successfully')
   getStatus() {
     return { status: 'running', uptime: process.uptime() };
   }

@@ -28,4 +28,8 @@ export class BooksService {
   async delete(id: string): Promise<BookDoc> {
     return this.bookRepository.delete(id);
   }
+
+  async findAllAuthorBooks(authorId: string, page:number, limit:number): Promise<BookDoc[]> {
+    return this.bookRepository.findAllAuthorBooks(authorId, page, limit);
+  }
 }

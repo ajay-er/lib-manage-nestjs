@@ -58,4 +58,17 @@ export class BooksController {
     if (!book) throw new BadRequestException('Book not found!');
     return this.bookService.delete(id);
   }
+
+  @ApiResponse()
+  @Get('author/:authorId')
+  async getAuthorBooks(
+    @Param('authorId') authorId: string,
+      @Query('page') page: number = 1,
+      @Query('limit') limit: number = 10,
+  ): Promise<BookDoc[]> {
+    const pageNumber = page ? parseInt(page.toString(), 10) : 1;
+    const limitNumber = limit ? parseInt(limit.toString(), 10) : 10;
+
+    return this.bookService.findAllAuthorBooks(authorId, pageNumber, limitNumber);
+  }
 }

@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { DatabaseEntity } from '@/common/database/decorators/database.decorator';
-import { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 
 export const BookDBCollection = 'book';
 
@@ -11,6 +11,8 @@ export class Book extends Document {
     index: true,
     unique: true,
     type: String,
+    minlength: 1,
+    maxlength: 60,
   })
     title: string;
 
@@ -18,13 +20,20 @@ export class Book extends Document {
     required: false,
     type: String,
     trim: true,
+    maxlength: 300,
   })
     description?: string;
 
-  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true })
-  // authorId: AuthorEntity;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true })
+    authorId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({
+    required: true,
+    validate: {
+      validator: (value: Date) => value <= new Date(),
+      message: 'Published date must be in the past or present',
+    },
+  })
     publishedDate: Date;
 }
 

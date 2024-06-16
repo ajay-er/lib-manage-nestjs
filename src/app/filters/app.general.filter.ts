@@ -1,12 +1,11 @@
-import type { ExceptionFilter } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ExceptionFilter, ArgumentsHost } from '@nestjs/common';
 import {
   Catch, HttpException, HttpStatus, Logger,
 } from '@nestjs/common';
-import type { ArgumentsHost, HttpArgumentsHost } from '@nestjs/common/interfaces';
-import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import type { Response } from 'express';
-import type { AppException } from '@/app/interfaces/app.interface';
 
 @Catch()
 export class AppGeneralFilter implements ExceptionFilter {
@@ -21,32 +20,32 @@ export class AppGeneralFilter implements ExceptionFilter {
     this.debug = this.configService.get<boolean>('app.debug', false);
   }
 
-  async catch(exception: unknown, host: ArgumentsHost): Promise<void> {
+  async catch(exception: any, host: ArgumentsHost): Promise<void> {
     const { httpAdapter } = this.httpAdapterHost;
-    const ctx: HttpArgumentsHost = host.switchToHttp();
-    const response: Response = ctx.getResponse<Response>();
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
 
     // Log the exception if debug mode is enabled
     if (this.debug) {
       this.logger.error(exception);
     }
 
+    // Default error response for other exceptions
+    let statusHttp = exception.message ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+    const defaultMessage = exception.message ?? 'Internal Server Error';
+
     // Handling HTTP exceptions
     if (exception instanceof HttpException) {
       const responseBody = exception.getResponse();
-      const statusHttp = exception.getStatus();
-      httpAdapter.reply(ctx.getResponse(), responseBody, statusHttp);
+      statusHttp = exception.getStatus();
+      httpAdapter.reply(response, responseBody, statusHttp);
       return;
     }
 
-    // Default error response for non-HTTP exceptions
-    const statusHttp: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    const defaultMessage = 'Internal Server Error';
-    const responseBody: AppException = {
+    const responseBody = {
       statusCode: statusHttp,
       message: defaultMessage,
     };
-
     response.status(statusHttp).json(responseBody);
   }
 }

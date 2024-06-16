@@ -1,10 +1,9 @@
 import { AppModule } from '@/app/app.module';
-import { Logger, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { NestApplication } from '@nestjs/core';
 import { NestFactory } from '@nestjs/core';
 import { swaggerApp } from '@/swagger';
-import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const app: NestApplication = await NestFactory.create(AppModule);
@@ -25,8 +24,7 @@ async function bootstrap() {
     exclude: ['/', 'status'],
   });
 
-  // For Custom Validation
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  app.useGlobalPipes(new ValidationPipe());
 
   // Versioning
   if (versionEnable) {

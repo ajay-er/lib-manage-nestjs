@@ -8,12 +8,14 @@ import { AuthorsService } from '@/modules/authors/services/authors.service';
 import type { AuthorDoc } from '@/modules/authors/repository/entities/authors.entity';
 import { AuthorDto } from '@/modules/authors/dto/auth.dto';
 import { UpdateAuthorDto } from '@/modules/authors/dto/update-auth.dto';
+import { BooksService } from '@/modules/books/services/books.service';
 
 @ApiTags('authors')
 @Controller('authors')
 export class AuthorsController {
   constructor(
     private readonly authorsService: AuthorsService,
+    private readonly booksService: BooksService,
   ) {}
 
   @ApiResponse()
@@ -51,11 +53,12 @@ export class AuthorsController {
     return this.authorsService.update(id, authorDto);
   }
 
-  @ApiResponse('Deleted Successfully!')
+  @ApiResponse('Author Deleted Successfully!')
   @Delete(':id')
   async deleteAuthor(@Param('id') id: string): Promise<AuthorDoc> {
     const author = await this.authorsService.findById(id);
     if (!author) throw new BadRequestException('Author not found!');
+    await this.booksService.deleteAllAuthorBooks(id);
     return this.authorsService.delete(id);
   }
 }

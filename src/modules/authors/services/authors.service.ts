@@ -7,6 +7,7 @@ import type { AuthorDto } from '@/modules/authors/dto/auth.dto';
 export class AuthorsService {
   constructor(
     private readonly authorRepository: AuthorRepository,
+
   ) {}
 
   async create(authorDto: AuthorDto): Promise<AuthorDoc> {

@@ -18,7 +18,7 @@ export class Author extends Document {
   @Prop({
     type: String,
     trim: true,
-    minlength: 0,
+    minlength: 3,
     maxlength: 300,
   })
     biography?: string;

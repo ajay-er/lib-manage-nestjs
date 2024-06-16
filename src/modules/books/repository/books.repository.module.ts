@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BookRepository } from '@/modules/books/repository/repositories/books.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BookEntity, BookSchema } from '@/modules/books/repository/entities/books.entity';
+import { Book, BookSchema } from '@/modules/books/repository/entities/books.entity';
 import { DATABASE_CONNECTION_NAME } from '@/common/database/constants/database.constant';
 
 @Module({
@@ -11,7 +11,7 @@ import { DATABASE_CONNECTION_NAME } from '@/common/database/constants/database.c
     MongooseModule.forFeature(
       [
         {
-          name: BookEntity.name,
+          name: Book.name,
           schema: BookSchema,
         },
       ],

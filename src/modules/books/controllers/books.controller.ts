@@ -1,11 +1,13 @@
 import {
-  Body, Controller, Get, Param, Post, Query,
+  BadRequestException,
+  Body, Controller, Delete, Get, Param, Patch, Post, Query,
 } from '@nestjs/common';
 import { BooksService } from '../services/books.service';
 import type { BookDoc } from '../repository/entities/books.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/response/decorators/response.decorator';
 import { BookDto } from '@/modules/books/dto/book.dto';
+import { UpdateBookDto } from '../dto/updateBook.dto';
 
 @ApiTags('books')
 @Controller('books')
@@ -35,6 +37,25 @@ export class BooksController {
   @ApiResponse()
   @Get(':id')
   async getBookById(@Param('id') id: string): Promise<BookDoc> {
-    return this.bookService.findById(id);
+    const book = await this.bookService.findById(id);
+    if (!book) throw new BadRequestException('Book not found!');
+    return book;
+  }
+
+  @ApiResponse('Updated Successfully')
+  @Patch(':id')
+  async updateBook(
+    @Param('id') id: string,
+      @Body() bookDto: UpdateBookDto,
+  ): Promise<BookDoc> {
+    return this.bookService.update(id, bookDto);
+  }
+
+  @ApiResponse('Deleted Successfully!')
+  @Delete(':id')
+  async deleteBook(@Param('id') id: string): Promise<BookDoc> {
+    const book = await this.bookService.findById(id);
+    if (!book) throw new BadRequestException('Book not found!');
+    return this.bookService.delete(id);
   }
 }

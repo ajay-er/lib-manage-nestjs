@@ -1,11 +1,11 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { DatabaseEntity } from '@/common/database/decorators/database.decorator';
-import type { Document } from 'mongoose';
+import { Document } from 'mongoose';
 
 export const BookDBCollection = 'book';
 
 @DatabaseEntity({ collection: BookDBCollection })
-export class BookEntity {
+export class Book extends Document {
   @Prop({
     required: true,
     index: true,
@@ -22,12 +22,12 @@ export class BookEntity {
     description?: string;
 
   // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true })
-  // author: AuthorsEntity;
+  // authorId: AuthorEntity;
 
   @Prop({ required: true })
     publishedDate: Date;
 }
 
-export const BookSchema = SchemaFactory.createForClass(BookEntity);
+export const BookSchema = SchemaFactory.createForClass(Book);
 
-export type BookDoc = BookEntity & Document;
+export type BookDoc = Book;

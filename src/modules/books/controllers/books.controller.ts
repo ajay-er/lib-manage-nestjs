@@ -8,17 +8,21 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/response/decorators/response.decorator';
 import { BookDto } from '@/modules/books/dto/book.dto';
 import { UpdateBookDto } from '../dto/updateBook.dto';
+import { AuthorsService } from '@/modules/authors/services/authors.service';
 
 @ApiTags('books')
 @Controller('books')
 export class BooksController {
   constructor(
     private readonly bookService: BooksService,
+    private readonly authorsService: AuthorsService,
   ) {}
 
   @ApiResponse()
   @Post()
   async createBook(@Body() bookDto: BookDto): Promise<BookDoc> {
+    const author = await this.authorsService.findById(bookDto.authorId);
+    if (!author) throw new BadRequestException('Author not found');
     return this.bookService.create(bookDto);
   }
 

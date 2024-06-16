@@ -34,4 +34,9 @@ export class BookRepository {
     await deletedBook.deleteOne();
     return deletedBook;
   }
+
+  async findAllAuthorBooks(authorId: string, page: number, limit:number): Promise<BookDoc[]> {
+    const skip = (page - 1) * limit;
+    return this.bookModel.find({ authorId }).skip(skip).limit(limit).exec();
+  }
 }

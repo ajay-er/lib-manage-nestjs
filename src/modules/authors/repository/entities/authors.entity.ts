@@ -6,13 +6,20 @@ export const AuthorDBCollection = 'author';
 
 @DatabaseEntity({ collection: AuthorDBCollection })
 export class Author extends Document {
-  name: string;
+  @Prop({
+    required: true,
+    type: String,
+    trim: true,
+    minlength: 1,
+    maxlength: 60,
+  })
+    name: string;
 
   @Prop({
     type: String,
     trim: true,
     minlength: 0,
-    maxlength: 1000,
+    maxlength: 300,
   })
     biography?: string;
 

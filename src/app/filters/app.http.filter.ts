@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ExceptionFilter, ArgumentsHost } from '@nestjs/common';
-import { Catch, HttpException, Logger } from '@nestjs/common';
+import {
+  Catch, HttpException, HttpStatus, Logger,
+} from '@nestjs/common';
 import type { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { ConfigService } from '@nestjs/config';
 import type { Response } from 'express';
 import type { AppException } from '@/app/interfaces/app.interface';
+import { RequestValidationException } from '@/common/request/exceptions/request.validation.exception';
 
 @Catch(HttpException)
 export class AppHttpFilter implements ExceptionFilter {
@@ -24,22 +28,19 @@ export class AppHttpFilter implements ExceptionFilter {
       this.logger.error(exception);
     }
 
-    const responseException = exception.getResponse();
-    const statusHttp = exception.getStatus();
-    const defaultMessage = 'Internal Server Error';
-
-    let statusCode = statusHttp;
-    let message = typeof responseException === 'string' ? responseException : defaultMessage;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let statusCode: number;
+    let message: string;
     let errors: any;
     let data: Record<string, unknown> | undefined;
 
-    // Check if the responseException is of type AppException
-    if (this.isAppException(responseException)) {
-      statusCode = responseException.statusCode;
-      message = responseException.message;
-      errors = responseException.errors;
-      data = responseException.data;
+    if (exception instanceof RequestValidationException) {
+      statusCode = HttpStatus.BAD_REQUEST;
+      message = 'Validation failed';
+      errors = exception.getResponse();
+    } else {
+      statusCode = exception.getStatus();
+      message = exception.message || 'Internal Server Error';
+      errors = exception.getResponse();
     }
 
     const responseBody: AppException = {
@@ -50,14 +51,5 @@ export class AppHttpFilter implements ExceptionFilter {
     };
 
     response.status(statusCode).json(responseBody);
-  }
-
-  private isAppException(obj: unknown): obj is AppException {
-    return (
-      typeof obj === 'object'
-      && obj !== null
-      && 'statusCode' in obj
-      && 'message' in obj
-    );
   }
 }

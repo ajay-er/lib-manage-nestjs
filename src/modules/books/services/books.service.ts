@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BookRepository } from '@/modules/books/repository/repositories/books.repository';
 import type { BookDoc } from '../repository/entities/books.entity';
 import type { BookDto } from '@/modules/books/dto/book.dto';
+import type { DateDto } from '../dto/date.dto';
 
 @Injectable()
 export class BooksService {
@@ -35,5 +36,9 @@ export class BooksService {
 
   async deleteAllAuthorBooks(authorId: string): Promise<unknown> {
     return this.bookRepository.deleteAllAuthorBooks(authorId);
+  }
+
+  async findAllWithinDateRange(dateDto: DateDto): Promise<BookDoc[]> {
+    return this.bookRepository.findAllWithinDateRange(dateDto);
   }
 }

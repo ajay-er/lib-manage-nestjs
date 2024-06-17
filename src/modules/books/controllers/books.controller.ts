@@ -9,6 +9,7 @@ import { ApiResponse } from '@/common/response/decorators/response.decorator';
 import { BookDto } from '@/modules/books/dto/book.dto';
 import { UpdateBookDto } from '../dto/updateBook.dto';
 import { AuthorsService } from '@/modules/authors/services/authors.service';
+import { DateDto } from '../dto/date.dto';
 
 @ApiTags('books')
 @Controller('books')
@@ -17,6 +18,14 @@ export class BooksController {
     private readonly bookService: BooksService,
     private readonly authorsService: AuthorsService,
   ) {}
+
+  @ApiResponse()
+  @Get('/date-range')
+  async getBooksWithinDateRange(
+    @Query() dateDto: DateDto,
+  ): Promise<BookDoc[]> {
+    return this.bookService.findAllWithinDateRange(dateDto);
+  }
 
   @ApiResponse()
   @Post()

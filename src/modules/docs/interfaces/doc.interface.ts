@@ -4,7 +4,7 @@ import type { ClassConstructor } from 'class-transformer';
 export interface DocResponseOptions <T = void> {
   statusCode?: number;
   httpStatus?: HttpStatus;
-  dto?: ClassConstructor<T>;
+  dto?: ClassConstructor<T> | ClassConstructor<T>[];
 }
 
 export interface DocOfOptions<T = void> {

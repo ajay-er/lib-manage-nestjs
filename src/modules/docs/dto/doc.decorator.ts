@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import {
-  ApiExtraModels, ApiProduces, ApiResponse, getSchemaPath,
+  ApiExtraModels,
+  ApiProduces,
+  ApiResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { ResponseDto } from '@/common/response/dtos/response.dto';
 import type { DocDefaultOptions, DocResponseOptions } from '@/modules/docs/interfaces/doc.interface';
+import type { ClassConstructor } from 'class-transformer';
 
 export function DocDefault<T>(options: DocDefaultOptions<T>): MethodDecorator {
   const docs = [];
@@ -23,12 +27,24 @@ export function DocDefault<T>(options: DocDefaultOptions<T>): MethodDecorator {
 
   if (options.dto) {
     docs.push(ApiExtraModels(options.dto as any));
-    schema.properties = {
-      ...schema.properties,
-      data: {
-        $ref: getSchemaPath(options.dto as any),
-      },
-    };
+    if (Array.isArray(options.dto)) {
+      schema.properties = {
+        ...schema.properties,
+        data: {
+          type: 'array',
+          items: {
+            $ref: getSchemaPath(options.dto[0] as any),
+          },
+        },
+      };
+    } else {
+      schema.properties = {
+        ...schema.properties,
+        data: {
+          $ref: getSchemaPath(options.dto as any),
+        },
+      };
+    }
   }
 
   return applyDecorators(
@@ -53,8 +69,13 @@ export function DocResponse<T = void>(
   };
 
   if (options?.dto) {
-    docs.dto = options?.dto;
+    // Handle single DTO case
+    if (!Array.isArray(options.dto)) {
+      docs.dto = options.dto as ClassConstructor<T>;
+    } else {
+      // Handle array DTOs by picking the first element
+      docs.dto = options.dto[0] as ClassConstructor<T>;
+    }
   }
-
   return applyDecorators(ApiProduces('application/json'), DocDefault(docs));
 }

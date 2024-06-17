@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post,
+  BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post,
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -9,6 +9,7 @@ import type { AuthorDoc } from '@/modules/authors/repository/entities/authors.en
 import { AuthorDto } from '@/modules/authors/dto/auth.dto';
 import { UpdateAuthorDto } from '@/modules/authors/dto/update-auth.dto';
 import { BooksService } from '@/modules/books/services/books.service';
+import { DocResponse } from '@/modules/docs/dto/doc.decorator';
 
 @ApiTags('authors')
 @Controller('authors')
@@ -18,12 +19,20 @@ export class AuthorsController {
     private readonly booksService: BooksService,
   ) {}
 
-  @ApiResponse()
+  @DocResponse('Author created Successfully', {
+    httpStatus: HttpStatus.CREATED,
+    dto: AuthorDto,
+  })
+  @ApiResponse('Author created Successfully')
   @Post()
   async createAuthor(@Body() authorDto: AuthorDto): Promise<AuthorDoc> {
     return this.authorsService.create(authorDto);
   }
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.OK,
+    dto: AuthorDto,
+  })
   @ApiResponse()
   @Get()
   async getAllAuthors(
@@ -36,6 +45,10 @@ export class AuthorsController {
     return this.authorsService.findAll(pageNumber, limitNumber);
   }
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.OK,
+    dto: AuthorDto,
+  })
   @ApiResponse()
   @Get(':id')
   async getAuthorById(@Param('id') id: string): Promise<AuthorDoc> {
@@ -44,7 +57,11 @@ export class AuthorsController {
     return author;
   }
 
-  @ApiResponse('Updated Successfully')
+  @DocResponse('Author Updated Successfully', {
+    httpStatus: HttpStatus.OK,
+    dto: AuthorDto,
+  })
+  @ApiResponse('Author Updated Successfully')
   @Patch(':id')
   async updateAuthor(
     @Param('id') id: string,
@@ -53,6 +70,10 @@ export class AuthorsController {
     return this.authorsService.update(id, authorDto);
   }
 
+  @DocResponse('Author Deleted Successfully', {
+    httpStatus: HttpStatus.OK,
+    dto: AuthorDto,
+  })
   @ApiResponse('Author Deleted Successfully!')
   @Delete(':id')
   async deleteAuthor(@Param('id') id: string): Promise<AuthorDoc> {

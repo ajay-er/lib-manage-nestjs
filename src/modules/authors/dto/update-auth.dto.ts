@@ -1,4 +1,5 @@
 /* eslint-disable max-classes-per-file */
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import type { ValidatorConstraintInterface, ValidationArguments } from 'class-validator';
 import {
@@ -25,17 +26,26 @@ class IsAtLeastTenYearsOld implements ValidatorConstraintInterface {
 }
 
 export class UpdateAuthorDto {
+  @ApiProperty({
+    example: 'Aju',
+  })
   @IsNotEmpty()
   @IsString()
   @IsOptional()
   @Length(1, 60)
     name?: string;
 
+  @ApiProperty({
+    example: 'Hello everyone',
+  })
   @IsOptional()
   @IsString()
   @Length(3, 300)
     biography?: string;
 
+  @ApiProperty({
+    example: '2000-01-23',
+  })
   @IsNotEmpty()
   @IsOptional()
   @Type(() => Date)

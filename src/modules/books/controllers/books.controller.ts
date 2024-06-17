@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  Body, Controller, Delete, Get, Param, Patch, Post, Query,
+  Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query,
 } from '@nestjs/common';
 import { BooksService } from '../services/books.service';
 import type { BookDoc } from '../repository/entities/books.entity';
@@ -10,6 +10,7 @@ import { BookDto } from '@/modules/books/dto/book.dto';
 import { UpdateBookDto } from '../dto/updateBook.dto';
 import { AuthorsService } from '@/modules/authors/services/authors.service';
 import { DateDto } from '../dto/date.dto';
+import { DocResponse } from '@/modules/docs/dto/doc.decorator';
 
 @ApiTags('books')
 @Controller('books')
@@ -19,6 +20,10 @@ export class BooksController {
     private readonly authorsService: AuthorsService,
   ) {}
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.OK,
+    dto: [BookDto],
+  })
   @ApiResponse()
   @Get('/date-range')
   async getBooksWithinDateRange(
@@ -27,6 +32,10 @@ export class BooksController {
     return this.bookService.findAllWithinDateRange(dateDto);
   }
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.CREATED,
+    dto: BookDto,
+  })
   @ApiResponse()
   @Post()
   async createBook(@Body() bookDto: BookDto): Promise<BookDoc> {
@@ -35,6 +44,10 @@ export class BooksController {
     return this.bookService.create(bookDto);
   }
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.OK,
+    dto: [BookDto],
+  })
   @ApiResponse()
   @Get()
   async getAllBooks(
@@ -47,6 +60,10 @@ export class BooksController {
     return this.bookService.findAll(pageNumber, limitNumber);
   }
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.OK,
+    dto: BookDto,
+  })
   @ApiResponse()
   @Get(':id')
   async getBookById(@Param('id') id: string): Promise<BookDoc> {
@@ -55,6 +72,10 @@ export class BooksController {
     return book;
   }
 
+  @DocResponse('Updated Successfully', {
+    httpStatus: HttpStatus.OK,
+    dto: BookDto,
+  })
   @ApiResponse('Updated Successfully')
   @Patch(':id')
   async updateBook(
@@ -64,6 +85,10 @@ export class BooksController {
     return this.bookService.update(id, bookDto);
   }
 
+  @DocResponse('Deleted Successfully', {
+    httpStatus: HttpStatus.OK,
+    dto: BookDto,
+  })
   @ApiResponse('Deleted Successfully!')
   @Delete(':id')
   async deleteBook(@Param('id') id: string): Promise<BookDoc> {
@@ -72,6 +97,10 @@ export class BooksController {
     return this.bookService.delete(id);
   }
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.OK,
+    dto: [BookDto],
+  })
   @ApiResponse()
   @Get('author/:authorId')
   async getAuthorBooks(
@@ -85,6 +114,9 @@ export class BooksController {
     return this.bookService.findAllAuthorBooks(authorId, pageNumber, limitNumber);
   }
 
+  @DocResponse('Success', {
+    httpStatus: HttpStatus.OK,
+  })
   @ApiResponse('Author Books deleted successfully!')
   @Delete('author/:authorId')
   async deleteAuthorBooks(

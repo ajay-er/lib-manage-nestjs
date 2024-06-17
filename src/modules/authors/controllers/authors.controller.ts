@@ -2,7 +2,7 @@ import {
   BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/response/decorators/response.decorator';
 import { AuthorsService } from '@/modules/authors/services/authors.service';
 import type { AuthorDoc } from '@/modules/authors/repository/entities/authors.entity';
@@ -19,6 +19,7 @@ export class AuthorsController {
     private readonly booksService: BooksService,
   ) {}
 
+  @ApiOperation({ summary: 'Create a new author' })
   @DocResponse('Author created Successfully', {
     httpStatus: HttpStatus.CREATED,
     dto: AuthorDto,
@@ -29,6 +30,7 @@ export class AuthorsController {
     return this.authorsService.create(authorDto);
   }
 
+  @ApiOperation({ summary: 'Get all authors with pagination!' })
   @DocResponse('Success', {
     httpStatus: HttpStatus.OK,
     dto: AuthorDto,
@@ -45,6 +47,7 @@ export class AuthorsController {
     return this.authorsService.findAll(pageNumber, limitNumber);
   }
 
+  @ApiOperation({ summary: 'Get author by ID' })
   @DocResponse('Success', {
     httpStatus: HttpStatus.OK,
     dto: AuthorDto,
@@ -57,6 +60,7 @@ export class AuthorsController {
     return author;
   }
 
+  @ApiOperation({ summary: 'Update an existing author' })
   @DocResponse('Author Updated Successfully', {
     httpStatus: HttpStatus.OK,
     dto: AuthorDto,
@@ -70,6 +74,7 @@ export class AuthorsController {
     return this.authorsService.update(id, authorDto);
   }
 
+  @ApiOperation({ summary: 'Delete an author' })
   @DocResponse('Author Deleted Successfully', {
     httpStatus: HttpStatus.OK,
     dto: AuthorDto,

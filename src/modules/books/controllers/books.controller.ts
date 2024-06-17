@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import { BooksService } from '../services/books.service';
 import type { BookDoc } from '../repository/entities/books.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/response/decorators/response.decorator';
 import { BookDto } from '@/modules/books/dto/book.dto';
 import { UpdateBookDto } from '../dto/updateBook.dto';
@@ -20,6 +20,7 @@ export class BooksController {
     private readonly authorsService: AuthorsService,
   ) {}
 
+  @ApiOperation({ summary: 'Get books within a date range', description: 'Retrieve a list of books published within the specified date range.' })
   @DocResponse('Success', {
     httpStatus: HttpStatus.OK,
     dto: [BookDto],
@@ -32,6 +33,10 @@ export class BooksController {
     return this.bookService.findAllWithinDateRange(dateDto);
   }
 
+  @ApiOperation({
+    summary: 'Create a new book',
+    description: 'Create a new book entry in the database.',
+  })
   @DocResponse('Success', {
     httpStatus: HttpStatus.CREATED,
     dto: BookDto,
@@ -44,6 +49,7 @@ export class BooksController {
     return this.bookService.create(bookDto);
   }
 
+  @ApiOperation({ summary: 'Get all books with pagination!' })
   @DocResponse('Success', {
     httpStatus: HttpStatus.OK,
     dto: [BookDto],
@@ -60,6 +66,7 @@ export class BooksController {
     return this.bookService.findAll(pageNumber, limitNumber);
   }
 
+  @ApiOperation({ summary: 'Get book by ID' })
   @DocResponse('Success', {
     httpStatus: HttpStatus.OK,
     dto: BookDto,
@@ -72,6 +79,7 @@ export class BooksController {
     return book;
   }
 
+  @ApiOperation({ summary: 'Update an existing book' })
   @DocResponse('Updated Successfully', {
     httpStatus: HttpStatus.OK,
     dto: BookDto,
@@ -85,6 +93,7 @@ export class BooksController {
     return this.bookService.update(id, bookDto);
   }
 
+  @ApiOperation({ summary: 'Delete a book' })
   @DocResponse('Deleted Successfully', {
     httpStatus: HttpStatus.OK,
     dto: BookDto,
@@ -97,6 +106,7 @@ export class BooksController {
     return this.bookService.delete(id);
   }
 
+  @ApiOperation({ summary: 'Get books by author ID with pagination!' })
   @DocResponse('Success', {
     httpStatus: HttpStatus.OK,
     dto: [BookDto],
@@ -114,6 +124,7 @@ export class BooksController {
     return this.bookService.findAllAuthorBooks(authorId, pageNumber, limitNumber);
   }
 
+  @ApiOperation({ summary: 'Delete all books by author ID' })
   @DocResponse('Success', {
     httpStatus: HttpStatus.OK,
   })

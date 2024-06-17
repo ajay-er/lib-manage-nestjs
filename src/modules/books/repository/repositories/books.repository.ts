@@ -4,6 +4,7 @@ import type { BookDoc } from '../entities/books.entity';
 import { Book } from '@/modules/books/repository/entities/books.entity';
 import { DatabaseModel } from '@/common/database/decorators/database.decorator';
 import type { BookDto } from '@/modules/books/dto/book.dto';
+import type { DateDto } from '../../dto/date.dto';
 
 @Injectable()
 export class BookRepository {
@@ -42,5 +43,11 @@ export class BookRepository {
 
   async deleteAllAuthorBooks(authorId: string): Promise<unknown> {
     return this.bookModel.deleteMany({ authorId });
+  }
+
+  async findAllWithinDateRange(dateDto: DateDto): Promise<BookDoc[]> {
+    return this.bookModel.find({
+      publishedDate: { $gte: dateDto.startDate, $lte: dateDto.endDate },
+    }).exec();
   }
 }

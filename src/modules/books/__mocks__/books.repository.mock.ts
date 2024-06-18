@@ -109,7 +109,7 @@ export const mockBookRepository = {
         title: faker.lorem.words(3),
         description: faker.lorem.paragraph(),
         authorId: faker.database.mongodbObjectId(),
-        publishedDate: faker.date.between(dateDto.startDate, dateDto.endDate),
+        publishedDate: faker.date.between({ from: dateDto.startDate, to: dateDto.endDate }),
       })) as unknown as BookDoc[];
 
       return Promise.resolve(mockBooks);

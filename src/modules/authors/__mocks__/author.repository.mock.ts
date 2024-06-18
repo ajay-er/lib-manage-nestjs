@@ -39,4 +39,26 @@ export const mockAuthorRepository = {
     }
     return Promise.resolve(null);
   }),
+  update: jest
+    .fn()
+    .mockImplementation(
+      async (id: string, authorDto: Partial<AuthorDto>): Promise<AuthorDoc | null> => {
+        if (!Types.ObjectId.isValid(id)) {
+          return Promise.resolve(null);
+        }
+
+        const existingAuthor = await mockAuthorRepository.findById(id);
+
+        if (!existingAuthor) {
+          return Promise.resolve(null);
+        }
+        const updatedAuthor: AuthorDoc = {
+          ...existingAuthor,
+          ...authorDto,
+        };
+
+        return Promise.resolve(updatedAuthor);
+      },
+    ),
+
 };

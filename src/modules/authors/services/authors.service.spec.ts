@@ -96,4 +96,33 @@ describe('AuthorsService', () => {
       await expect(service.findById(authorId)).rejects.toThrow('Author Not Found!');
     });
   });
+
+  describe('update', () => {
+    it('should update an existing author with provided data', async () => {
+      const id = faker.database.mongodbObjectId();
+      const updatedData = { biography: 'Updated biography' };
+
+      repositoryMock.findById = jest.fn().mockResolvedValue({
+        _id: id,
+        name: 'John Doe',
+        biography: 'A famous author',
+        birthDate: new Date('1980-01-01'),
+      });
+
+      const updatedAuthor = await service.update(id, updatedData);
+
+      expect(updatedAuthor).toBeDefined();
+      expect(updatedAuthor._id).toBe(id);
+      expect(updatedAuthor.biography).toBe(updatedData.biography);
+    });
+
+    it('should handle errors when updating non-existent author', async () => {
+      const id = 'invalidID';
+      const updatedData = { biography: 'Updated biography' };
+
+      repositoryMock.update = jest.fn().mockRejectedValue(new Error('Author Not Found!'));
+
+      await expect(service.update(id, updatedData)).rejects.toThrow('Author Not Found!');
+    });
+  });
 });

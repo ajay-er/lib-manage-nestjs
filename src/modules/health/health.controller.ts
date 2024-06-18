@@ -8,7 +8,7 @@ import { StatusResponse } from '@/modules/health/dto/status.dto';
 import { DocResponse } from '@/modules/docs/dto/doc.decorator';
 
 @ApiTags('health')
-@Controller({ version: VERSION_NEUTRAL })
+@Controller({ version: VERSION_NEUTRAL, path: '/health' })
 export class HealthController {
   @DocResponse('Application is healthy', {
     httpStatus: HttpStatus.OK,

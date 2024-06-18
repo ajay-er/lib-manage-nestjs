@@ -2,18 +2,12 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { AuthorsService } from './authors.service';
 import { AuthorRepository } from '../repository/repositories/authors.repository';
-import type { AuthorDto, AuthorResponseDto } from '../dto/auth.dto';
+import { mockAuthorRepository } from '../__mocks__/author.repository.mock';
+import { faker } from '@faker-js/faker';
 
 describe('AuthorsService', () => {
   let service: AuthorsService;
   let repositoryMock: Partial<AuthorRepository>;
-
-  const mockAuthorRepository = {
-    create: jest
-      .fn()
-      .mockImplementation((authorDto: AuthorDto):
-      Promise<AuthorResponseDto> => Promise.resolve({ biography: '', _id: '60d0fe4f5311236168a109ca', ...authorDto })),
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,7 +34,7 @@ describe('AuthorsService', () => {
       };
 
       const createdAuthor = {
-        _id: '60d0fe4f5311236168a109ca',
+        _id: '507f1f77bcf86cd799439011',
         ...authorDto,
       };
 
@@ -60,6 +54,46 @@ describe('AuthorsService', () => {
       jest.spyOn(service, 'create').mockRejectedValueOnce(new Error(errorMessage));
 
       await expect(service.create(authorDto)).rejects.toThrow(errorMessage);
+    });
+  });
+
+  describe('findAll', () => {
+    it.each([
+      [1, 10],
+      [2, 10],
+    ])('should return an array of authors with pagination for page %i and limit %i', async (page, limit) => {
+      const authors = await service.findAll(page, limit);
+
+      expect(authors).toHaveLength(limit);
+    });
+
+    it('should handle empty result from repository', async () => {
+      const page = 1;
+      const limit = 10;
+      repositoryMock.findAll = jest.fn().mockResolvedValue([]);
+      const authors = await service.findAll(page, limit);
+      expect(authors).toHaveLength(0);
+    });
+  });
+
+  describe('findById', () => {
+    it('should return an author when ID exists', async () => {
+      const authorId = faker.database.mongodbObjectId();
+      const author = await service.findById(authorId);
+      expect(author).toBeDefined();
+      expect(author?._id).toEqual(authorId);
+    });
+
+    it('should return null when ID does not exist', async () => {
+      const authorId = 'invalid_objectId';
+      const author = await service.findById(authorId);
+      expect(author).toBeNull();
+    });
+
+    it('should handle errors', async () => {
+      const authorId = faker.database.mongodbObjectId();
+      repositoryMock.findById = jest.fn().mockRejectedValue(new Error('Author Not Found!'));
+      await expect(service.findById(authorId)).rejects.toThrow('Author Not Found!');
     });
   });
 });

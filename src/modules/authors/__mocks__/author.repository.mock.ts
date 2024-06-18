@@ -60,5 +60,16 @@ export const mockAuthorRepository = {
         return Promise.resolve(updatedAuthor);
       },
     ),
+  delete: jest
+    .fn()
+    .mockImplementation(async (id: string): Promise<AuthorDoc | null> => {
+      const existingAuthor = await mockAuthorRepository.findById(id);
+
+      if (!existingAuthor) {
+        return Promise.resolve(null);
+      }
+
+      return Promise.resolve(existingAuthor);
+    }),
 
 };

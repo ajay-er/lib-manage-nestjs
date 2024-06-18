@@ -125,4 +125,50 @@ describe('AuthorsService', () => {
       await expect(service.update(id, updatedData)).rejects.toThrow('Author Not Found!');
     });
   });
+
+  describe('delete', () => {
+    it('should delete an existing author and return the deleted author', async () => {
+      const id = faker.database.mongodbObjectId();
+      const existingAuthor = {
+        _id: id,
+        name: 'John Doe',
+        biography: 'A famous author',
+        birthDate: new Date('1980-01-01'),
+      };
+
+      repositoryMock.findById = jest.fn().mockResolvedValue(existingAuthor);
+      repositoryMock.delete = jest.fn().mockResolvedValue(existingAuthor);
+
+      const deletedAuthor = await service.delete(id);
+
+      expect(deletedAuthor).toBeDefined();
+      expect(deletedAuthor._id).toBe(id);
+      expect(deletedAuthor.name).toBe(existingAuthor.name);
+      expect(deletedAuthor.biography).toBe(existingAuthor.biography);
+    });
+
+    it('should handle errors when deleting a non-existent author', async () => {
+      const id = faker.database.mongodbObjectId();
+
+      repositoryMock.findById = jest.fn().mockResolvedValue(null);
+      repositoryMock.delete = jest.fn().mockImplementation(async () => {
+        const existingAuthor = await repositoryMock.findById(id);
+        if (!existingAuthor) {
+          throw new Error('Author Not Found!');
+        }
+        return existingAuthor;
+      });
+
+      await expect(service.delete(id)).rejects.toThrow('Author Not Found!');
+    });
+
+    it('should handle errors when given an invalid ID', async () => {
+      const id = 'invalidID';
+
+      repositoryMock.findById = jest.fn().mockResolvedValue(null);
+      repositoryMock.delete = jest.fn().mockRejectedValue(new Error('Invalid ID'));
+
+      await expect(service.delete(id)).rejects.toThrow('Invalid ID');
+    });
+  });
 });

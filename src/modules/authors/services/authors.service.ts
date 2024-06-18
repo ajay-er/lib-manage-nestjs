@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthorRepository } from '@/modules/authors/repository/repositories/authors.repository';
 import type { AuthorDoc } from '@/modules/authors/repository/entities/authors.entity';
-import type { AuthorDto } from '@/modules/authors/dto/auth.dto';
+import type { AuthorDto, AuthorResponseDto } from '@/modules/authors/dto/auth.dto';
 
 @Injectable()
 export class AuthorsService {
@@ -10,7 +10,7 @@ export class AuthorsService {
 
   ) {}
 
-  async create(authorDto: AuthorDto): Promise<AuthorDoc> {
+  async create(authorDto: AuthorDto): Promise<AuthorResponseDto> {
     return this.authorRepository.create(authorDto);
   }
 

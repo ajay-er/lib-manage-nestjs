@@ -172,4 +172,71 @@ describe('BooksService', () => {
       expect(deletedBook).toBeNull();
     });
   });
+
+  describe('findAllAuthorBooks', () => {
+    it('should return paginated books by author successfully', async () => {
+      const authorId = faker.database.mongodbObjectId();
+      const page = 1;
+      const limit = 10;
+
+      const result = await service.findAllAuthorBooks(authorId, page, limit);
+
+      expect(result).toHaveLength(limit);
+      expect(result.every((book) => book instanceof Object)).toBe(true);
+    });
+
+    it('should return an empty array when no books are found for the author', async () => {
+      const authorId = faker.database.mongodbObjectId();
+      const page = 1;
+      const limit = 10;
+      repositoryMock.findAllAuthorBooks = jest.fn().mockResolvedValue([]);
+
+      const result = await service.findAllAuthorBooks(authorId, page, limit);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('deleteAllAuthorBooks', () => {
+    it('should delete all books for the given author successfully', async () => {
+      const authorId = faker.database.mongodbObjectId();
+
+      const result = await service.deleteAllAuthorBooks(authorId);
+
+      expect(result).toEqual({ deletedCount: 20 });
+    });
+
+    it('should return null when no books are found for the given author', async () => {
+      const authorId = faker.database.mongodbObjectId();
+      repositoryMock.deleteAllAuthorBooks = jest.fn().mockResolvedValue(null);
+      const result = await service.deleteAllAuthorBooks(authorId);
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('findAllWithinDateRange', () => {
+    it('should return books within the specified date range', async () => {
+      const start = '2022-01-01';
+      const end = '2022-12-31';
+      const startDate = new Date('2022-01-01');
+      const endDate = new Date('2022-12-31');
+
+      const result = await service.findAllWithinDateRange({ startDate: start, endDate: end });
+      expect(result).toHaveLength(10);
+      expect(result.every(
+        (book) => book.publishedDate >= startDate && book.publishedDate <= endDate,
+      ))
+        .toBe(true);
+    });
+
+    it('should return an empty array when no books are found within the date range', async () => {
+      const start = '2022-01-01';
+      const end = '2022-12-31';
+      repositoryMock.findAllWithinDateRange = jest.fn().mockResolvedValue([]);
+
+      const result = await service.findAllWithinDateRange({ startDate: start, endDate: end });
+      expect(result).toEqual([]);
+    });
+  });
 });

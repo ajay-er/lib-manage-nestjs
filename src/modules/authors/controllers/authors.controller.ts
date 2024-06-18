@@ -6,7 +6,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/response/decorators/response.decorator';
 import { AuthorsService } from '@/modules/authors/services/authors.service';
 import type { AuthorDoc } from '@/modules/authors/repository/entities/authors.entity';
-import { AuthorDto } from '@/modules/authors/dto/auth.dto';
+import { AuthorResponseDto, AuthorDto } from '@/modules/authors/dto/auth.dto';
 import { UpdateAuthorDto } from '@/modules/authors/dto/update-auth.dto';
 import { BooksService } from '@/modules/books/services/books.service';
 import { DocResponse } from '@/modules/docs/dto/doc.decorator';
@@ -22,11 +22,11 @@ export class AuthorsController {
   @ApiOperation({ summary: 'Create a new author' })
   @DocResponse('Author created Successfully', {
     httpStatus: HttpStatus.CREATED,
-    dto: AuthorDto,
+    dto: AuthorResponseDto,
   })
   @ApiResponse('Author created Successfully')
   @Post()
-  async createAuthor(@Body() authorDto: AuthorDto): Promise<AuthorDoc> {
+  async createAuthor(@Body() authorDto: AuthorDto): Promise<AuthorResponseDto> {
     return this.authorsService.create(authorDto);
   }
 

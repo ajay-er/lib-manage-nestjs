@@ -3,7 +3,7 @@ import { Model, Types } from 'mongoose';
 import { DatabaseModel } from '@/common/database/decorators/database.decorator';
 import type { AuthorDoc } from '@/modules/authors/repository/entities/authors.entity';
 import { Author } from '@/modules/authors/repository/entities/authors.entity';
-import type { AuthorDto } from '@/modules/authors/dto/auth.dto';
+import type { AuthorDto, AuthorResponseDto } from '@/modules/authors/dto/auth.dto';
 
 @Injectable()
 export class AuthorRepository {
@@ -11,8 +11,8 @@ export class AuthorRepository {
     @DatabaseModel(Author.name) private readonly authorModel: Model<Author>,
   ) {}
 
-  async create(authorDto: AuthorDto): Promise<AuthorDoc> {
-    return this.authorModel.create(authorDto);
+  async create(authorDto: AuthorDto): Promise<AuthorResponseDto> {
+    return (await this.authorModel.create(authorDto)).toObject() as AuthorResponseDto;
   }
 
   async findAll(page:number, limit:number): Promise<AuthorDoc[]> {

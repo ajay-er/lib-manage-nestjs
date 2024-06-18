@@ -51,3 +51,7 @@ export class AuthorDto {
   @Validate(IsAtLeastTenYearsOld)
     birthDate: Date;
 }
+export class AuthorResponseDto extends AuthorDto {
+  @ApiProperty({ example: '60d0fe4f5311236168a109ca' })
+    _id: string;
+}

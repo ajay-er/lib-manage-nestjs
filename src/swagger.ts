@@ -11,7 +11,7 @@ export const swaggerApp = async (app: NestApplication) => {
 
   const logger = new Logger();
 
-  const docPrefix = '/docs';
+  const docPrefix = '/';
   const docDescription = 'My API docs- lib-manage API';
   const docVersion = '1.0';
 
@@ -19,15 +19,6 @@ export const swaggerApp = async (app: NestApplication) => {
     .setTitle(appName)
     .setDescription(docDescription)
     .setVersion(docVersion)
-    .addServer('/')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'accessToken',
-    )
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'refreshToken',
-    )
     .build();
 
   const document = SwaggerModule.createDocument(app, documentBuild, {
@@ -43,13 +34,12 @@ export const swaggerApp = async (app: NestApplication) => {
     explorer: true,
     customSiteTitle: appName,
     swaggerOptions: {
-      docExpansion: 'none',
+      // docExpansion: 'none',
       persistAuthorization: true,
       displayOperationId: true,
       operationsSorter: 'method',
       tagsSorter: 'alpha',
       tryItOutEnabled: true,
-      filter: true,
       deepLinking: true,
     },
   });

@@ -21,7 +21,7 @@ async function bootstrap() {
 
   // Global
   app.setGlobalPrefix(globalPrefix, {
-    exclude: ['/', 'status'],
+    exclude: ['/health', '/health/status'],
   });
 
   app.useGlobalPipes(new ValidationPipe());
